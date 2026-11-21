@@ -1,3 +1,52 @@
+const IMAGE_LOAD_LIMIT = 3
+const imageLoadQueue = []
+let activeImageLoads = 0
+
+function queueImageLoad(img) {
+  if (img.dataset.loadQueued === 'true' || img.dataset.loaded === 'true') return
+  img.dataset.loadQueued = 'true'
+  imageLoadQueue.push(img)
+  startQueuedImageLoads()
+}
+
+function startQueuedImageLoads() {
+  while (activeImageLoads < IMAGE_LOAD_LIMIT && imageLoadQueue.length) {
+    const img = imageLoadQueue.shift()
+    const src = img.dataset.src
+    if (!src || !img.isConnected) continue
+
+    activeImageLoads++
+    img.dataset.loaded = 'true'
+    img.addEventListener('load', finishImageLoad, { once: true })
+    img.addEventListener('error', finishImageLoad, { once: true })
+    img.src = src
+  }
+}
+
+function finishImageLoad() {
+  activeImageLoads = Math.max(0, activeImageLoads - 1)
+  startQueuedImageLoads()
+}
+
+const imageObserver = 'IntersectionObserver' in window
+  ? new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return
+        imageObserver.unobserve(entry.target)
+        queueImageLoad(entry.target)
+      })
+    }, { rootMargin: '200px' })
+  : null
+
+function observeLazyImage(img) {
+  if (imageObserver) imageObserver.observe(img)
+  else queueImageLoad(img)
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img[data-src]').forEach(observeLazyImage)
+})
+
 const hamburger = document.querySelector(".hamburger")
 const nav_menu = document.querySelector(".nav-menu")
 
@@ -54,9 +103,10 @@ fetch('https://olgaku.art/g')
       h = ''
       for (var d in data) {
         p = data[d]['thumb'].replace('i/','').replaceAll(' ', '_')
-        h += '<a href="https://olgaku.art/#lg='+p+'&slide='+data[d]['slide']+'"><img src="https://olgaku.art/'+data[d]['thumb']+'/p"> '+data[d]['name']+'</a><br>'
+        h += '<a href="https://olgaku.art/#lg='+p+'&slide='+data[d]['slide']+'"><img data-src="https://olgaku.art/'+data[d]['thumb']+'/p"> '+data[d]['name']+'</a><br>'
       }
       dv.innerHTML = h
+      dv.querySelectorAll('img[data-src]').forEach(observeLazyImage)
       console.log(data)
     })
   })
@@ -199,7 +249,8 @@ function menuItemClick(el) {
         //if (data[d]['name'].contans('.jpg')) {
           i = document.createElement('img')
           //i.className = 'img-responsive'
-          i.src = data[d]['img'].replace("\/b","\/p")
+          i.dataset.src = data[d]['img'].replace("\/b","\/p")
+          observeLazyImage(i)
           div = document.createElement('figure')
           div.className = 'snip'
 
@@ -248,7 +299,8 @@ function galleryClick (src, cpt, path){
 
           i = document.createElement('img')
           i.className = 'img-responsive'
-          i.src = data[d]['src']+"/p"
+          i.dataset.src = data[d]['src']+"/p"
+          observeLazyImage(i)
           last_src = data[d]['src']+"/p"
           a.appendChild(i)
           //a.innerText = data[d]['name'].toUpperCase()
@@ -259,7 +311,8 @@ function galleryClick (src, cpt, path){
         a = document.createElement('div')
         a.className = 'gallery-mock'
         ie = document.createElement('img')
-        ie.src = last_src
+        ie.dataset.src = last_src
+        observeLazyImage(ie)
         ie.className = 'img-responsive'
         a.appendChild(ie)
         el.appendChild(a)
