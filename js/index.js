@@ -2,6 +2,21 @@ const MAX_IMAGE_LOADS = 5
 const imageLoadQueue = []
 let activeImageLoads = 0
 let imageLoadLimit = 1
+let completedLoadTime = 0
+let completedLoadCount = 0
+const imageRevealQueue = []
+let revealInProgress = false
+
+function revealNextImage() {
+  if (revealInProgress || !imageRevealQueue.length) return
+  revealInProgress = true
+  const img = imageRevealQueue.shift()
+  img.classList.add('is-loaded')
+  setTimeout(() => {
+    revealInProgress = false
+    revealNextImage()
+  }, 120)
+}
 
 function queueImageLoad(img) {
   if (img.dataset.loadQueued === 'true' || img.dataset.loaded === 'true') return
@@ -31,9 +46,13 @@ function finishImageLoad(event) {
   const elapsed = Date.now() - Number(img.dataset.loadStarted)
   img.classList.remove('is-loading')
   if (event.type === 'load') {
-    img.classList.add('is-loaded')
-    if (elapsed < 500) imageLoadLimit = Math.min(MAX_IMAGE_LOADS, imageLoadLimit + 2)
-    else if (elapsed < 2000) imageLoadLimit = Math.min(MAX_IMAGE_LOADS, imageLoadLimit + 1)
+    completedLoadTime += elapsed
+    completedLoadCount++
+    const averageLoadTime = completedLoadTime / completedLoadCount
+    img.classList.add('is-ready')
+    imageRevealQueue.push(img)
+    revealNextImage()
+    if (averageLoadTime < 2000) imageLoadLimit = Math.min(MAX_IMAGE_LOADS, imageLoadLimit + 1)
   } else {
     img.classList.add('is-load-error')
   }

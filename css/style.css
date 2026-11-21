@@ -450,21 +450,30 @@ figure.snip:hover figcaption p {
 img.lazy-image {
   opacity: 0;
   transform: scale(0.985);
-  transition: opacity 500ms ease, transform 600ms cubic-bezier(.2,.7,.2,1);
-  background: linear-gradient(100deg, #171717 25%, #303030 40%, #171717 55%);
-  background-size: 220% 100%;
+  transition: opacity 450ms ease, transform 550ms cubic-bezier(.2,.7,.2,1);
 }
 
 img.lazy-image.is-loading {
   opacity: 1;
-  animation: image-loading-progress 1.2s ease-in-out infinite;
+  color: transparent;
+  background: conic-gradient(#fff 0 20%, #444 20% 100%);
+  -webkit-mask: radial-gradient(circle, transparent 48%, #000 52%);
+  mask: radial-gradient(circle, transparent 48%, #000 52%);
+  animation: image-loading-progress 900ms linear infinite;
+}
+
+img.lazy-image.is-ready {
+  opacity: 0;
+  transform: scale(0.985);
 }
 
 img.lazy-image.is-loaded {
   opacity: 1;
   transform: scale(1);
-  background: none;
+  background: transparent;
   animation: none;
+  -webkit-mask: none;
+  mask: none;
 }
 
 img.lazy-image.is-load-error {
@@ -473,8 +482,7 @@ img.lazy-image.is-load-error {
 }
 
 @keyframes image-loading-progress {
-  from { background-position: 100% 0; }
-  to { background-position: -120% 0; }
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
