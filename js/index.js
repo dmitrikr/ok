@@ -1,6 +1,7 @@
-const IMAGE_LOAD_LIMIT = 3
+const MAX_IMAGE_LOADS = 5
 const imageLoadQueue = []
 let activeImageLoads = 0
+let imageLoadLimit = 1
 
 function queueImageLoad(img) {
   if (img.dataset.loadQueued === 'true' || img.dataset.loaded === 'true') return
@@ -10,20 +11,32 @@ function queueImageLoad(img) {
 }
 
 function startQueuedImageLoads() {
-  while (activeImageLoads < IMAGE_LOAD_LIMIT && imageLoadQueue.length) {
+  while (activeImageLoads < imageLoadLimit && imageLoadQueue.length) {
     const img = imageLoadQueue.shift()
     const src = img.dataset.src
     if (!src || !img.isConnected) continue
 
     activeImageLoads++
     img.dataset.loaded = 'true'
+    img.dataset.loadStarted = String(Date.now())
+    img.classList.add('lazy-image', 'is-loading')
     img.addEventListener('load', finishImageLoad, { once: true })
     img.addEventListener('error', finishImageLoad, { once: true })
     img.src = src
   }
 }
 
-function finishImageLoad() {
+function finishImageLoad(event) {
+  const img = event.currentTarget
+  const elapsed = Date.now() - Number(img.dataset.loadStarted)
+  img.classList.remove('is-loading')
+  if (event.type === 'load') {
+    img.classList.add('is-loaded')
+    if (elapsed < 500) imageLoadLimit = Math.min(MAX_IMAGE_LOADS, imageLoadLimit + 2)
+    else if (elapsed < 2000) imageLoadLimit = Math.min(MAX_IMAGE_LOADS, imageLoadLimit + 1)
+  } else {
+    img.classList.add('is-load-error')
+  }
   activeImageLoads = Math.max(0, activeImageLoads - 1)
   startQueuedImageLoads()
 }

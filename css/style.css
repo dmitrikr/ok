@@ -446,3 +446,41 @@ figure.snip:hover figcaption p {
 #searchOutput img {
   width: 100px;
 }
+
+img.lazy-image {
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 500ms ease, transform 600ms cubic-bezier(.2,.7,.2,1);
+  background: linear-gradient(100deg, #171717 25%, #303030 40%, #171717 55%);
+  background-size: 220% 100%;
+}
+
+img.lazy-image.is-loading {
+  opacity: 1;
+  animation: image-loading-progress 1.2s ease-in-out infinite;
+}
+
+img.lazy-image.is-loaded {
+  opacity: 1;
+  transform: scale(1);
+  background: none;
+  animation: none;
+}
+
+img.lazy-image.is-load-error {
+  opacity: 0.45;
+  animation: none;
+}
+
+@keyframes image-loading-progress {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  img.lazy-image,
+  img.lazy-image.is-loading {
+    transition: none;
+    animation: none;
+  }
+}
