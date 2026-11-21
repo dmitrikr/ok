@@ -1,0 +1,102 @@
+<html>
+<head>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=League+Gothic&display=swap" rel="stylesheet">
+   <link href="css/style.css" rel="stylesheet">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
+   <script>
+      needAuth = true
+      function getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+          "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+         token = ''
+         if(window.location.hash) {
+            parts = window.location.hash.split('#')[1].split('&')
+            parts.forEach((item)=>{
+               pts = item.split('=')
+               if (pts[0]=='access_token') {
+                  token = pts[1]
+               }
+            })
+         }
+         if (token=='') {
+            token = getCookie('x-auth')
+         }
+         if (token!=''){
+            needAuth = false
+            fetch('https://olgaku.art/auth/callback', {
+                method: 'get',
+                headers: new Headers({
+                        'X-Auth': token
+                }),
+            }).then(res => res.json())
+            .then(res => { 
+               //console.log(res)
+               if (res['result']=='success') {
+                  console.log('SUCCESS')  
+                  updateMessage("Successful authorization. Now you can request any pics you like.")
+                  document.cookie = "x-auth="+token+"; path=/"
+               } else {
+                  runAuth()
+               }
+            }).catch(function(err) {
+            // Called if the server returns any errors
+              console.log("Error:"+err);
+              updateMessage("Unknown error")
+            });
+         }
+
+         if (needAuth) {
+            runAuth()
+         }
+      })
+
+      function updateMessage( text) {
+         el = document.querySelector("#message")
+         el.innerHTML = text
+      }
+
+      function runAuth() {
+         YaAuthSuggest.init(
+            {
+               client_id: '8836d1e4b046409eaefec78c6a17145f',
+               response_type: 'token',
+               redirect_uri: 'https://olgaku.art/login.html'
+            },
+            'https://olgaku.art', 
+            {
+               view: "button",
+               parentId: "login",
+               buttonSize: 'm',
+               buttonView: 'main',
+               buttonTheme: 'light',
+               buttonBorderRadius: "0",
+               buttonIcon: 'ya',
+            }
+         )
+         .then(({
+            handler
+         }) => handler())
+         .then(data => console.log('Token error', data))
+         .catch(error => console.log('Error processing', error));
+      }
+   </script>
+</head>
+
+<body style="display:block; text-align: center;">
+   <br><br>
+   <div id="header" style="padding:20px">Client area. Please complete the authorization or contact us.</div>
+
+   <div id="message"></div>
+
+   <div id="login" style="padding-left: 40%; padding-right: 40%;"></div>
+   
+</body>
+</html>
+

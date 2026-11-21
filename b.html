@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+    <head>
+        <meta data-n-head="1" charset="utf-8">
+        <meta data-n-head="1" name="viewport" content="width=device-width,initial-scale=1">
+        <meta data-n-head="1" data-hid="robots" name="robots" content="noindex, nofollow">
+        <meta data-n-head="1" data-hid="description" name="description" content="Online booking by EasyWeek">
+        <meta data-n-head="1" name="msapplication-TileColor" content="#000000">
+
+        <meta data-n-head="1" name="theme-color" content="#000000">
+        <title>Online booking </title>
+        <link data-n-head="1" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+        <link data-n-head="1" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+        <link data-n-head="1" rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link data-n-head="1" rel="preconnect" href="//fonts.googleapis.com">
+        <link data-n-head="1" rel="dns-prefetch" href="//fonts.gstatic.com">
+        <link data-n-head="1" rel="preconnect" href="//fonts.gstatic.com">
+
+        <link rel="preload" href="./js/e73d77f.js" as="script">
+        <link rel="preload" href="./js/7c310d7.js" as="script">
+        <link rel="preload" href="./js/401db4e.js" as="script">
+        <link rel="preload" href="./js/d663621.js" as="script">
+    </head>
+    <body>
+        <div id="__nuxt">
+            <style>
+                body {
+                    background: #f3f5f7
+                }
+
+                body.is-loading-dark {
+                    background: #010101
+                }
+
+                @media (min-width: 1024px) {
+                    body.is-loading-dark {
+                        background:#1e1e21
+                    }
+                }
+
+                .spinner {
+                    width: 4rem;
+                    height: 4rem;
+                    background-color: var(--c-primary,#bababa);
+                    border-radius: 100%;
+                    animation: sk-pulse 1.2s infinite cubic-bezier(.455,.03,.515,.955);
+                    position: fixed;
+                    top: calc(50% - 2rem);
+                    left: calc(50% - 2rem);
+                    z-index: 999
+                }
+
+                .spinner.error {
+                    background-color: var(--c-error,#ee7565);
+                    transition: 2s background-color
+                }
+
+                @keyframes sk-pulse {
+                    0% {
+                        transform: scale(0)
+                    }
+
+                    100% {
+                        transform: scale(1);
+                        opacity: 0
+                    }
+                }
+            </style>
+            <script>
+                var isDark = location.search.includes("theme=dark");
+                isDark && document.body.classList.add("is-loading-dark"),
+                window.addEventListener("error", (function() {
+                    var a = document.getElementById("nuxt-loading");
+                    a && (a.className += " error")
+                }
+                ))
+            </script>
+            <!-- <div class="spinner-scene"> -->
+            <div id="nuxt-loading" class="spinner"></div>
+            <!-- </div> -->
+        </div>
+        <script>
+            window.__NUXT__ = {
+                config: {
+                    _app: {
+                        basePath: "/",
+                        assetsPath: "/",
+                        cdnURL: "./js/"
+                    },
+                    VERSION: "0.99.6"
+                }
+            }
+        </script>
+        <!-- script src="./js/e73d77f.js"></script>
+        <script src="./js/7c310d7.js"></script>
+        <script src="./js/401db4e.js"></script>
+        <script src="./js/d663621.js"></script -->
+        
+        <script id="aeWidgetScript" type="text/javascript" src="//appevent.ru/widgets/widgethandle.min.js?widget_key=7dab728b533a0bb24ec62847598afff0" async=true charset="UTF-8"></script>
+
+    </body>
+</html>
