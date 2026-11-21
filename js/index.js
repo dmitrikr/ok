@@ -52,8 +52,8 @@ function finishImageLoad(event) {
     img.classList.add('is-ready')
     imageRevealQueue.push(img)
     revealNextImage()
-    imageLoadLimit = Math.min(MAX_IMAGE_LOADS, Math.ceil(250/averageLoadTime))
-    console.log(averageLoadTime, imageLoadLimit)
+    imageLoadLimit = Math.min(MAX_IMAGE_LOADS, Math.ceil(500/averageLoadTime))
+    //console.log(averageLoadTime, imageLoadLimit)
   } else {
     img.classList.add('is-load-error')
   }
