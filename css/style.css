@@ -460,6 +460,8 @@ img.lazy-image.is-loading {
   -webkit-mask: radial-gradient(circle, transparent 48%, #000 52%);
   mask: radial-gradient(circle, transparent 48%, #000 52%);
   animation: image-loading-progress 900ms linear infinite;
+  width:212px;
+  height:318px;
 }
 
 img.lazy-image.is-ready {
